@@ -1,19 +1,45 @@
 const postgre = require("../database");
+
 const bookController = {
-  getAll: async (req, res) => {
-    console.log("inGet");
+  createUser: async (req, res) => {
+    const { participant_id, firstname, lastname, email, age, batch_id } =
+      req.body;
+
+    const payment_date = null;
+    const newAge = Number(age);
+    const text =
+      "INSERT INTO participants(participant_id,firstname,lastname ,email, age ,batch_id ,payment_date ) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *";
+
     try {
-      const { rows } = await postgre.query("select * from books");
+      const data = await postgre.query(text, [
+        participant_id,
+        firstname,
+        lastname,
+        email,
+        newAge,
+        batch_id,
+        payment_date,
+      ]);
+      res.json({ msg: "OK", data: data.rows[0] });
+    } catch (error) {
+      res.json({ msg: error.msg });
+    }
+  },
+
+  getAll: async (req, res) => {
+    try {
+      const { rows } = await postgre.query("select * from participants");
       res.json({ msg: "OK", data: rows });
     } catch (error) {
       res.json({ msg: error.msg });
     }
   },
+
   getById: async (req, res) => {
     try {
       const { rows } = await postgre.query(
-        "select * from books where book_id = $1",
-        [req.params.id]
+        "select * from participants where  email=$1",
+        [req.body.email]
       );
 
       if (rows[0]) {
@@ -25,44 +51,25 @@ const bookController = {
       res.json({ msg: error.msg });
     }
   },
-  create: async (req, res) => {
+  updateBatch: async (req, res) => {
+    const { participant_id, batch_id } = req.body;
+    const sql =
+      "UPDATE participants SET batch_id=$1 where participant_id=$2 RETURNING *";
     try {
-      const { name, price } = req.body;
-      console.log(name, price);
-      const sql = "INSERT INTO books(name, price) VALUES($1, $2) RETURNING *";
-
-      const { rows } = await postgre.query(sql, [name, price]);
-      console.log(rows);
-      res.json({ msg: "OK", data: rows[0] });
+      const data = await postgre.query(sql, [batch_id, participant_id]);
+      res.json({ msg: "OK", data: data.rows[0] });
     } catch (error) {
       res.json({ msg: error.msg });
     }
   },
-  updateById: async (req, res) => {
+  updatePay: async (req, res) => {
+    const { participant_id, payment_date } = req.body;
+    const sql =
+      "UPDATE participants SET payment_date=$1 where participant_id=$2 RETURNING *";
     try {
-      const { name, price } = req.body;
+      const data = await postgre.query(sql, [payment_date, participant_id]);
 
-      const sql =
-        "UPDATE books set name = $1, price = $2 where book_id = $3 RETURNING *";
-
-      const { rows } = await postgre.query(sql, [name, price, req.params.id]);
-
-      res.json({ msg: "OK", data: rows[0] });
-    } catch (error) {
-      res.json({ msg: error.msg });
-    }
-  },
-  deleteById: async (req, res) => {
-    try {
-      const sql = "DELETE FROM books where book_id = $1 RETURNING *";
-
-      const { rows } = await postgre.query(sql, [req.params.id]);
-
-      if (rows[0]) {
-        return res.json({ msg: "OK", data: rows[0] });
-      }
-
-      return res.status(404).json({ msg: "not found" });
+      res.json({ msg: "OK", data: data.rows[0] });
     } catch (error) {
       res.json({ msg: error.msg });
     }
