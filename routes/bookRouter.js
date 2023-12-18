@@ -5,6 +5,6 @@ const bookController = require("../controller/bookController");
 router.get("/", bookController.getAll);
 router.post("/user", bookController.getById);
 router.post("/", bookController.createUser);
-router.patch("/user", bookController.updateBatch);
-router.patch("/payment", bookController.updatePay);
+router.post("/update/batch", bookController.updateBatch);
+router.post("/update/payment", bookController.updatePay);
 module.exports = router;
