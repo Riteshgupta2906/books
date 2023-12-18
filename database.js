@@ -44,6 +44,7 @@ pool.connect(async (err, client, release) => {
         
         firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
+    gender varchar(10) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     age INTEGER CHECK (age BETWEEN 18 AND 65),
     batch_id VARCHAR(255) NOT NULL,

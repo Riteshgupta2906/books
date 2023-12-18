@@ -2,13 +2,20 @@ const postgre = require("../database");
 
 const bookController = {
   createUser: async (req, res) => {
-    const { participant_id, firstname, lastname, email, age, batch_id } =
-      req.body;
+    const {
+      participant_id,
+      firstname,
+      lastname,
+      email,
+      age,
+      batch_id,
+      gender,
+    } = req.body;
 
     const payment_date = null;
     const newAge = Number(age);
     const text =
-      "INSERT INTO participants(participant_id,firstname,lastname ,email, age ,batch_id ,payment_date ) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *";
+      "INSERT INTO participants(participant_id,firstname,lastname ,email, age ,batch_id ,payment_date,gender ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *";
 
     try {
       const data = await postgre.query(text, [
@@ -19,6 +26,7 @@ const bookController = {
         newAge,
         batch_id,
         payment_date,
+        gender,
       ]);
       res.json({ msg: "OK", data: data.rows[0] });
     } catch (error) {
@@ -53,6 +61,7 @@ const bookController = {
   },
   updateBatch: async (req, res) => {
     const { participant_id, batch_id } = req.body;
+
     const sql =
       "UPDATE participants SET batch_id=$1 where participant_id=$2 RETURNING *";
     try {
