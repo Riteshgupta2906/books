@@ -61,6 +61,7 @@ const bookController = {
   },
   updateBatch: async (req, res) => {
     const { participant_id, batch_id } = req.body;
+    console.log(req.body);
 
     const sql =
       "UPDATE participants SET batch_id=$1 where participant_id=$2 RETURNING *";
@@ -73,6 +74,7 @@ const bookController = {
   },
   updatePay: async (req, res) => {
     const { participant_id, payment_date } = req.body;
+    console.log(req.body);
     const sql =
       "UPDATE participants SET payment_date=$1 where participant_id=$2 RETURNING *";
     try {
